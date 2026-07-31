@@ -11,7 +11,7 @@ env:
   STUDENT_ID: toemsamnob
   IMAGE_NAME: resttemplateserver-sep
 
-  GITOPS_REPO: leeyoungkon/resttemplateserver-sep-gitops
+  GITOPS_REPO: toemsamnob/resttemplateserver-sep-gitops
   GITOPS_PATH: overlays/dev
       
 jobs:
