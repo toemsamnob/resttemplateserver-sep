@@ -3,6 +3,7 @@ package com.example.resttemplateserver.book;
 import java.net.URI;
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,12 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 @RestController
 @RequestMapping("/books")
 public class BookController {
-
+	//ci-cd test
 	private final BookRepository bookRepository;
 
 	public BookController(BookRepository bookRepository) {
