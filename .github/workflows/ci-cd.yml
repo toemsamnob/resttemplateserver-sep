@@ -30,7 +30,7 @@ jobs:
         id: meta
         shell: pwsh
         run: |
-          "tag=${{ github.sha }}" >> $env:GITHUB_OUTPUT
+          "tag=1a092ce9c3080a3e20e2d73879712389843b8ee4" >> $env:GITHUB_OUTPUT
 
       - name: Log in to Harbor
         uses: docker/login-action@v3
