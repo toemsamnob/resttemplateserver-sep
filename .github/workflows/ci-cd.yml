@@ -28,9 +28,9 @@ jobs:
 
       - name: Generate image tag
         id: meta
-        shell: pwsh
+        shell: bash
         run: |
-          "tag=${{ github.sha }}" >> $env:GITHUB_OUTPUT
+          echo "tag=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to Harbor
         uses: docker/login-action@v3
@@ -65,38 +65,30 @@ jobs:
 
       
       - name: Install kustomize
-        shell: pwsh
+        shell: bash
         run: |
-          $version = "v5.7.1"
-
-          Invoke-WebRequest `
-            -Uri "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/$version/kustomize_${version}_windows_amd64.zip" `
-            -OutFile kustomize.zip
-
-          Expand-Archive kustomize.zip -DestinationPath .
-
-          echo "$PWD" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
-
-          .\kustomize.exe version    
+          version="v5.7.1"
+          curl -L -o kustomize.tar.gz "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/$version/kustomize_${version}_linux_amd64.tar.gz"
+          tar -xzf kustomize.tar.gz
+          chmod +x kustomize
+          echo "$PWD" >> "$GITHUB_PATH"
+          ./kustomize version
 
       - name: Update image tag
-        shell: pwsh
+        shell: bash
         run: |
           cd gitops/${{ env.GITOPS_PATH }}
-
-          kustomize edit set image `
-            ${{ env.IMAGE_NAME }}=${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/${{ env.STUDENT_ID }}/${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.image_tag }}
+          kustomize edit set image "${{ env.IMAGE_NAME }}=${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/${{ env.STUDENT_ID }}/${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.image_tag }}"
 
       - name: Commit and push GitOps change
-        shell: pwsh
+        shell: bash
         run: |
           cd gitops
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add .
-          git diff --staged --quiet
-          if ($LASTEXITCODE -ne 0) {
+          if ! git diff --staged --quiet; then
             git commit -m "ci: update ${{ env.IMAGE_NAME }} image to ${{ needs.build-and-push.outputs.image_tag }}"
             git push
-          }
+          fi
