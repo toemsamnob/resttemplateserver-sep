@@ -82,7 +82,7 @@ jobs:
 
       - name: Commit and push GitOps change
         shell: bash
-        run: |
+        run: | 
           cd gitops
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
